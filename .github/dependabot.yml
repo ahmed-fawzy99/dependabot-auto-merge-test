@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    # Keep PRs separate (one per dependency) so each has a clear
+    # single update-type for the auto-merge workflow to evaluate.
+    open-pull-requests-limit: 10

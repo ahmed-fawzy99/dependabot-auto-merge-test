@@ -1,0 +1,12 @@
+{
+  "name": "dependabot-auto-merge-test",
+  "version": "1.0.0",
+  "description": "Throwaway repo to test Dependabot auto-merge of patch/minor updates.",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "ms": "2.1.2",
+    "lodash": "4.17.21",
+    "chalk": "4.1.2"
+  }
+}
