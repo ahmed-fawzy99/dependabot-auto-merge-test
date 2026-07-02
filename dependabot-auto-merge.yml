@@ -1,0 +1,40 @@
+# Production-ready Dependabot auto-merge.
+# Copy to .github/workflows/dependabot-auto-merge.yml in any repo.
+#
+# Per-repo prerequisites (NOT in this file):
+#   1. Settings > Actions > General > Workflow permissions = "Read and write"
+#   2. Settings > General > "Allow auto-merge" enabled (required for --auto)
+#   3. A .github/dependabot.yml so Dependabot opens PRs
+#
+# Merges patch and minor Dependabot PRs; leaves major updates for review.
+# Uses --auto, so with branch protection the merge waits for required checks
+# and GitHub serializes queued merges (no concurrent-PR conflicts).
+
+name: Dependabot auto-merge
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for patch and minor updates
+        if: >
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          steps.meta.outputs.update-type == 'version-update:semver-minor'
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --merge "$PR_URL"
